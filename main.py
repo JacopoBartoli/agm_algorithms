@@ -32,7 +32,9 @@ def clustering_coefficient(graph):
         for u in graph.neighbors(v):
             u_neighbors=set(graph.neighbors(u))
             appo=appo+len(v_neighbors.intersection(u_neighbors))
-        coefficient.append((2*appo)/(len(graph.neighbors(v))*(len(graph.neighbors(v))-1)))
+        if(len(list(graph.neighbors(v)))!=0):
+            appo=(2*appo)/(len(list(graph.neighbors(v)))*((len(list(graph.neighbors(v)))-1)))
+        coefficient.append(appo)
     return coefficient
 
 
@@ -70,7 +72,7 @@ def function():
 
     # Migliorabile utilizzando qualche cosa come i vicini
 
-    print(graph.number_of_nodes(), graph.number_of_edges())
+    #print(graph.number_of_nodes(), graph.number_of_edges())
 
 
     # Generate 2000 double (x,y) with x in[30,50) and y in [10,20)
@@ -91,7 +93,10 @@ def function():
                 if (abs(x[1] - y[1]) <= distance and abs(x[2] - y[2] <= distance)):
                     handcrafted_graph.add_edge(x, y);
 
-    print(handcrafted_graph.number_of_nodes(), handcrafted_graph.number_of_edges())
+    #print(handcrafted_graph.number_of_nodes(), handcrafted_graph.number_of_edges())
+
+    print(low_degree_vertex(graph))
+    list=clustering_coefficient(graph)
 
 
 
