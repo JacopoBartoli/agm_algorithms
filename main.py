@@ -32,8 +32,10 @@ def clustering_coefficient(graph):
         for u in graph.neighbors(v):
             u_neighbors=set(graph.neighbors(u))
             appo=appo+len(v_neighbors.intersection(u_neighbors))
-        if(len(list(graph.neighbors(v)))!=0):
+        if(len(list(graph.neighbors(v)))>1):
             appo=(2*appo)/(len(list(graph.neighbors(v)))*((len(list(graph.neighbors(v)))-1)))
+        else:
+            appo=0;
         coefficient.append(appo)
     return coefficient
 
@@ -96,7 +98,8 @@ def function():
     #print(handcrafted_graph.number_of_nodes(), handcrafted_graph.number_of_edges())
 
     print(low_degree_vertex(graph))
-    list=clustering_coefficient(graph)
+    coefficients=clustering_coefficient(graph)
+    print(list)
 
 
 
