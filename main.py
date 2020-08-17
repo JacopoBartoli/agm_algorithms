@@ -3,6 +3,7 @@ from tqdm import tqdm
 import numpy as np
 import json
 
+#Function used for counting the number of triangle on a graph.
 def low_degree_vertex(graph):
     nodes=list(graph.nodes)
     triangle_count=0
@@ -16,7 +17,7 @@ def low_degree_vertex(graph):
                     if(graph.degree[u]>graph.degree[v] and graph.degree[w]>graph.degree[v]):
                         if(u in graph.neighbors(w)):
                             triangle_count=triangle_count+1
-    return triangle_count/2
+    return triangle_count
 
 def clustering_coefficient(graph):
     nodes=list(graph.nodes)
@@ -27,9 +28,6 @@ def clustering_coefficient(graph):
         for u in graph.neighbors(v):
             u_neighbors=set(graph.neighbors(u))
             appo=appo+len(v_neighbors.intersection(u_neighbors))
-            print("v:",v)
-            print("u:",u)
-            print(v_neighbors.intersection(u_neighbors))
         if(len(list(graph.neighbors(v)))>1):
             appo=appo/(len(list(graph.neighbors(v)))*((len(list(graph.neighbors(v)))-1)))
         else:
@@ -72,8 +70,6 @@ def function():
 
     # Migliorabile utilizzando qualche cosa come i vicini
 
-    #print(graph.number_of_nodes(), graph.number_of_edges())
-
 
     # Generate 2000 double (x,y) with x in[30,50) and y in [10,20)
     # Shall the elements be distinct?
@@ -93,7 +89,6 @@ def function():
                 if (abs(x[1] - y[1]) <= distance and abs(x[2] - y[2] <= distance)):
                     handcrafted_graph.add_edge(x, y);
 
-    #print(handcrafted_graph.number_of_nodes(), handcrafted_graph.number_of_edges())
 
 def test():
     # Test on a handcrafted graph
@@ -103,16 +98,14 @@ def test():
     g.add_node("3")
     g.add_node("4")
     g.add_node("5")
-    g.add_node("6")
     g.add_edge("1", "2")
     g.add_edge("2","3")
     g.add_edge("3","1")
     g.add_edge("2","4")
     g.add_edge("3","4")
     g.add_edge("3","5")
-    g.add_edge("5","6")
-    coefficients = clustering_coefficient(g)
-    print(coefficients)
+    g.add_edge("4","5")
+    print(low_degree_vertex(g))
 
 
 
