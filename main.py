@@ -1,8 +1,3 @@
-# This is a sample Python script.
-
-# Press Maiusc+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
 import networkx as nx
 from tqdm import tqdm
 import numpy as np
@@ -21,7 +16,7 @@ def low_degree_vertex(graph):
                     if(graph.degree[u]>graph.degree[v] and graph.degree[w]>graph.degree[v]):
                         if(u in graph.neighbors(w)):
                             triangle_count=triangle_count+1
-    return triangle_count
+    return triangle_count/2
 
 def clustering_coefficient(graph):
     nodes=list(graph.nodes)
@@ -32,8 +27,11 @@ def clustering_coefficient(graph):
         for u in graph.neighbors(v):
             u_neighbors=set(graph.neighbors(u))
             appo=appo+len(v_neighbors.intersection(u_neighbors))
+            print("v:",v)
+            print("u:",u)
+            print(v_neighbors.intersection(u_neighbors))
         if(len(list(graph.neighbors(v)))>1):
-            appo=(2*appo)/(len(list(graph.neighbors(v)))*((len(list(graph.neighbors(v)))-1)))
+            appo=appo/(len(list(graph.neighbors(v)))*((len(list(graph.neighbors(v)))-1)))
         else:
             appo=0;
         coefficient.append(appo)
@@ -97,13 +95,28 @@ def function():
 
     #print(handcrafted_graph.number_of_nodes(), handcrafted_graph.number_of_edges())
 
-    print(low_degree_vertex(graph))
-    coefficients=clustering_coefficient(graph)
-    print(list)
+def test():
+    # Test on a handcrafted graph
+    g = nx.Graph()
+    g.add_node("1")
+    g.add_node("2")
+    g.add_node("3")
+    g.add_node("4")
+    g.add_node("5")
+    g.add_node("6")
+    g.add_edge("1", "2")
+    g.add_edge("2","3")
+    g.add_edge("3","1")
+    g.add_edge("2","4")
+    g.add_edge("3","4")
+    g.add_edge("3","5")
+    g.add_edge("5","6")
+    coefficients = clustering_coefficient(g)
+    print(coefficients)
 
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    function()
+    test()
 
