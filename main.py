@@ -3,38 +3,51 @@ from tqdm import tqdm
 import numpy as np
 import json
 
-#Function used for counting the number of triangle on a graph.
+
+# Function used for counting the number of triangle on a graph.
 def low_degree_vertex(graph):
-    nodes=list(graph.nodes)
-    triangle_count=0
-    #For each nodes, we need to iterate on its neighbors and for each couple of them we need to find if there is an edge between that connect the pair.
-    #The next cycle iterates on the graph nodes.
-    #In this algorithm we consider only the nodes that have higher degree of v.
+    nodes = list(graph.nodes)
+    triangle_count = 0
+    # For each nodes, we need to iterate on its neighbors and for each couple of them we need to find if there is an edge between that connect the pair.
+    # The next cycle iterates on the graph nodes.
+    # In this algorithm we consider only the nodes that have higher degree of v.
+    for v in nodes:
+        if len(list(graph.neighbors(v))) > 1:
+            for u in graph.neighbors(v):
+                for w in graph.neighbors(v):
+                    if u != w:
+                        if graph.degree[u] > graph.degree[v] and graph.degree[w] > graph.degree[v]:
+                            if u in graph.neighbors(w):
+                                triangle_count = triangle_count + 1
+    return triangle_count
+
+
+def counting_triangles(graph):
+    nodes = list(graph.nodes)
+    triangle_count = 0
     for v in nodes:
         for u in graph.neighbors(v):
             for w in graph.neighbors(v):
-                if(u!=w):
-                    if(graph.degree[u]>graph.degree[v] and graph.degree[w]>graph.degree[v]):
-                        if(u in graph.neighbors(w)):
-                            triangle_count=triangle_count+1
-    return triangle_count
+                if u != w and w in graph.neighbors(u):
+                    triangle_count = triangle_count + 1
+    return triangle_count / 6
+
 
 def clustering_coefficient(graph):
-    nodes=list(graph.nodes)
-    coefficient=list()
+    nodes = list(graph.nodes)
+    coefficient = list()
     for v in nodes:
-        v_neighbors=set(graph.neighbors(v))
-        appo=0
+        v_neighbors = set(graph.neighbors(v))
+        appo = 0
         for u in graph.neighbors(v):
-            u_neighbors=set(graph.neighbors(u))
-            appo=appo+len(v_neighbors.intersection(u_neighbors))
-        if(len(list(graph.neighbors(v)))>1):
-            appo=appo/(len(list(graph.neighbors(v)))*((len(list(graph.neighbors(v)))-1)))
+            u_neighbors = set(graph.neighbors(u))
+            appo = appo + len(v_neighbors.intersection(u_neighbors))
+        if len(list(graph.neighbors(v))) > 1:
+            appo = appo / (len(list(graph.neighbors(v))) * (len(list(graph.neighbors(v))) - 1))
         else:
-            appo=0;
+            appo = 0;
         coefficient.append(appo)
     return coefficient
-
 
 
 def function():
@@ -50,7 +63,7 @@ def function():
 
     # Discharge the provinces where the field "denominazione_provincia" is equal to 'In fase di definizione/aggiornamento'
     for data in datastore:
-        if (data["denominazione_provincia"] == 'In fase di definizione/aggiornamento'):
+        if data["denominazione_provincia"] == 'In fase di definizione/aggiornamento':
             datastore.remove(data)
 
     # Create the province's graph.
@@ -64,12 +77,11 @@ def function():
     # Add edges.
     for x in tqdm(datastore):
         for y in datastore:
-            if (x != y):
-                if (abs(x["lat"] - y["lat"]) <= distance and abs(x["long"] - y["long"]) <= distance):
+            if x != y:
+                if abs(x["lat"] - y["lat"]) <= distance and abs(x["long"] - y["long"]) <= distance:
                     graph.add_edge(x["codice_provincia"], y["codice_provincia"])
 
     # Migliorabile utilizzando qualche cosa come i vicini
-
 
     # Generate 2000 double (x,y) with x in[30,50) and y in [10,20)
     # Shall the elements be distinct?
@@ -85,8 +97,8 @@ def function():
     distance = 0.08
     for x in tqdm(double_list):
         for y in double_list:
-            if (x[0] != y[0]):
-                if (abs(x[1] - y[1]) <= distance and abs(x[2] - y[2] <= distance)):
+            if x[0] != y[0]:
+                if abs(x[1] - y[1]) <= distance and abs(x[2] - y[2] <= distance):
                     handcrafted_graph.add_edge(x, y);
 
 
@@ -99,17 +111,21 @@ def test():
     g.add_node("4")
     g.add_node("5")
     g.add_edge("1", "2")
-    g.add_edge("2","3")
-    g.add_edge("3","1")
-    g.add_edge("2","4")
-    g.add_edge("3","4")
-    g.add_edge("3","5")
-    g.add_edge("4","5")
+    g.add_edge("2", "3")
+    g.add_edge("3", "1")
+    g.add_edge("2", "4")
+    g.add_edge("3", "4")
+    g.add_edge("3", "5")
+    g.add_edge("4", "5")
+    print(counting_triangles(g))
+    print(sum(nx.triangles(g).values()) / 3)
     print(low_degree_vertex(g))
 
+    g=nx.complete_graph(5)
+    print(counting_triangles(g))
+    print(sum(nx.triangles(g).values())/3)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     test()
-
