@@ -80,7 +80,7 @@ def counting_triangles_ldv(graph: Graph) -> int:
     return count_triangles
 
 
-def clustering_coefficients(graph) -> dict:
+def clustering_coefficients_set_intersection(graph: Graph) -> dict:
     coefficients = {}
     for v in graph.nodes:
         v_neighbors = set(graph.neighbors(v))
@@ -97,6 +97,50 @@ def clustering_coefficients(graph) -> dict:
             coefficients[v] = 0
 
     return coefficients
+
+
+def clustering_coefficients_list_intersection(graph: Graph) -> dict:
+    coefficients = {}
+    for v in graph.nodes:
+        v_neighbors = list(graph.neighbors(v))
+        v_neighbors_len = len(v_neighbors)
+
+        if v_neighbors_len > 1:
+            n_triangles = 0
+            for u in v_neighbors:
+                u_neighbors = list(graph.neighbors(u))
+                intersection = get_list_intersection(v_neighbors, u_neighbors)
+                n_triangles += len(intersection)
+
+            coeff = n_triangles / (v_neighbors_len * (v_neighbors_len - 1))
+            coefficients[v] = coeff
+        else:
+            coefficients[v] = 0
+
+    return coefficients
+
+
+def get_list_intersection(l1: list, l2: list) -> list:
+    """
+    Calculates the intersection between two lists
+    Complexity: O(|l1|log|l1| + |l2|log|l2|)
+    """
+    l1 = sorted(l1)
+    l2 = sorted(l2)
+
+    i = 0
+    j = 0
+    intersection = []
+    while i < len(l1) and j < len(l2):
+        if l1[i] < l2[j]:
+            i += 1
+        elif l1[i] > l2[j]:
+            j += 1
+        else:
+            intersection.append(l1[i])
+            i += 1
+            j += 1
+    return intersection
 
 
 # ----------------------------------
@@ -405,13 +449,19 @@ def test_clustering_coefficients(dict_graphs: dict):
     for graph_name, graph in dict_graphs.items():
         print(f"\nEvaluating graph {graph_name}...")
 
-        our_time = math.inf
+        set_time = math.inf
+        list_time = math.inf
         nx_time = math.inf
         for i in tqdm(range(TIME_EVALUATIONS)):
             start = timeit.default_timer()
-            clustering_coefficients(graph)
+            clustering_coefficients_set_intersection(graph)
             end = timeit.default_timer()
-            our_time = min(end - start, our_time)
+            set_time = min(end - start, set_time)
+
+            start = timeit.default_timer()
+            clustering_coefficients_list_intersection(graph)
+            end = timeit.default_timer()
+            list_time = min(end - start, list_time)
 
             start = timeit.default_timer()
             nx.clustering(graph)
@@ -419,10 +469,12 @@ def test_clustering_coefficients(dict_graphs: dict):
             nx_time = min(end - start, nx_time)
 
         print(" - Coefficients calculated")
-        print(f"\tOurs: {clustering_coefficients(graph)}")
+        print(f"\tSet Intersection: {clustering_coefficients_set_intersection(graph)}")
+        print(f"\tList Intersection: {clustering_coefficients_list_intersection(graph)}")
         print(f"\tNetworkX: {nx.clustering(graph)}")
         print(" - Execution times")
-        print(f"\tOurs: {our_time * 1000} ms")
+        print(f"\tSet Intersection: {set_time * 1000} ms")
+        print(f"\tList Intersection: {list_time * 1000} ms")
         print(f"\tNetworkX: {nx_time * 1000} ms")
 
 
