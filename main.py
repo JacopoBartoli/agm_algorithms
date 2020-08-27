@@ -406,15 +406,15 @@ def test_counting_triangles(dict_graphs: dict):
     for graph_name, graph in dict_graphs.items():
         print(f"\nEvaluating graph {graph_name}...")
 
-        # naive_time = math.inf
+        #naive_time = math.inf
         nbrs_time = math.inf
         ldv_time = math.inf
         nx_time = math.inf
         for i in tqdm(range(TIME_EVALUATIONS)):
-            # start = timeit.default_timer()
-            # counting_triangles_naive(graph)
-            # end = timeit.default_timer()
-            # naive_time = min(end - start, naive_time)
+            #start = timeit.default_timer()
+            #counting_triangles_naive(graph)
+            #end = timeit.default_timer()
+            #naive_time = min(end - start, naive_time)
 
             start = timeit.default_timer()
             counting_triangles_nbrs_pairs(graph)
@@ -432,7 +432,7 @@ def test_counting_triangles(dict_graphs: dict):
             nx_time = min(end - start, nx_time)
 
         print(" - Triangles counted")
-        # print(f"\tNaive: {counting_triangles_naive(graph)}")
+        #print(f"\tNaive: {counting_triangles_naive(graph)}")
         print(f"\tNeighbors Pairs: {counting_triangles_nbrs_pairs(graph)}")
         print(f"\tLDV: {counting_triangles_ldv(graph)}")
         print(f"\tNetworkX: {sum(nx.triangles(graph).values()) / 3}")
