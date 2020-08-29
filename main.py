@@ -59,19 +59,25 @@ def counting_triangles_ldv(graph: Graph) -> int:
     """
     Implementation of the algorithm for counting triangles using the Low-Degree Vertices approach
     """
+
+    # Access to graph.degree is expensive: we save the degree of all nodes in a dictionary
+    dict_degrees = {}
+    for (node, val) in graph.degree():
+        dict_degrees[node] = val
+
     count_triangles = 0
     for v in graph.nodes:
-        v_degree = graph.degree[v]
+        v_degree = dict_degrees[v]
 
         list_nbrs = list(graph.neighbors(v))
         n_nbrs = len(list_nbrs)
-        for i in range(n_nbrs):
-            u = list_nbrs[i]
-            u_degree = graph.degree[u]
+        for j in range(n_nbrs):
+            u = list_nbrs[j]
+            u_degree = dict_degrees[u]
             if u_degree > v_degree or (u_degree == v_degree and v < u):
-                for j in range(i + 1, n_nbrs):
-                    w = list_nbrs[j]
-                    w_degree = graph.degree[w]
+                for k in range(j + 1, n_nbrs):
+                    w = list_nbrs[k]
+                    w_degree = dict_degrees[w]
                     if w_degree > v_degree or (w_degree == v_degree and v < w):
                         # If it exists and edge connecting u and w we found a triangle
                         if u in graph.adj[w]:
